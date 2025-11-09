@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  registry:
+    image: registry:2
+    restart: always
+    environment:
+      REGISTRY_AUTH: "htpasswd"
+      REGISTRY_AUTH_HTPASSWD_REALM: "Registry Realm"
+      REGISTRY_AUTH_HTPASSWD_PATH: "/auth/htpasswd"
+    volumes:
+      - ./data:/var/lib/registry
+      - ./auth:/auth:ro
+
+  nginx:
+    image: nginx:latest
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+    depends_on:
+      - registry
+
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+    entrypoint: /bin/sh -c
+    command: >
+      "trap exit TERM;
+      while :; do
+        certbot renew --webroot --webroot-path=/var/lib/letsencrypt;
+        sleep 12h & wait $${!};
+      done"
+
+volumes:
+  certbot-etc:
+  certbot-var:

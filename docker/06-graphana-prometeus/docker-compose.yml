@@ -1,0 +1,47 @@
+services:
+  app:
+    build:
+      target: base
+      dockerfile: Dockerfile
+      context: ./app
+    container_name: app
+    ports:
+      - "7000:7000"
+    environment:
+      - SERVICE_NAME=app
+      - PORT=7000
+    networks:
+      - monitor-net
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - monitor-net
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - monitor-net
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /:/rootfs:ro
+      # - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - monitor-net
+
+networks:
+  monitor-net:
+    driver: bridge

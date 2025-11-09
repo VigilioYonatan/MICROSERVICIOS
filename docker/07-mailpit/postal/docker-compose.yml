@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  postal:
+    image: postalhq/postal:latest
+    container_name: postal
+    restart: unless-stopped
+    hostname: mail.vigilio-services.com # tu subdominio de correo
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      RAILS_ENV: production
+    volumes:
+      - postal_data:/opt/postal
+
+volumes:
+  postal_data:

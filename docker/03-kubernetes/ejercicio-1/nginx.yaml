@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+    name: nginx
+    labels:
+        zone: prod
+        version: v1
+        otra: metiqueta
+        estado: tuvieja
+spec:
+    containers:
+        - name: nginx
+          image: vigilio/nginx:v1

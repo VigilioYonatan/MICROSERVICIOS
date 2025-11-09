@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025" # Interfaz web
+      - "1025:1025" # Puerto SMTP
+    environment:
+      # Opcionales
+      MP_MAX_MESSAGES: 5000
+      MP_UI_AUTH: "admin:1234" # opcional (usuario:contraseña para el panel)
+    volumes:
+      - mailpit_data:/data
+
+volumes:
+  mailpit_data:

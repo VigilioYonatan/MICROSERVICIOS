@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+    name: nginx
+    labels:
+        zone: prod
+        version: v1
+        otra: metiqueta
+spec:
+    containers:
+        - name: nginx
+          image: vigilio/nginx:v1
+        - name: frontal
+          image: alpine
+          command: ["watch", "-n5", "ping"]

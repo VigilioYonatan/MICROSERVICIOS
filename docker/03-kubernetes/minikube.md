@@ -1,0 +1,5 @@
+# MINIKUBE
+
+```bash
+minikube start
+```

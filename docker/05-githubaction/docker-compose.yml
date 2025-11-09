@@ -1,0 +1,40 @@
+x-runner-template: &runner-template
+  image: myoung34/github-runner:latest
+  restart: always
+  environment:
+    ORG_URL: ${ORG_URL}
+    GITHUB_PAT: ${GITHUB_PAT}
+    RUNNER_SCOPE: org
+    EPHEMERAL: "false"
+    DISABLE_AUTO_UPDATE: "false"
+    RUNNER_WORKDIR: /_work
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+services:
+  # 🟢 Runner especializado para Node.js
+  # github-runner-node:
+  #   <<: *runner-template
+  #   container_name: github-runner-node
+  #   environment:
+  #     <<: *runner-template.environment
+  #     RUNNER_NAME: vigilio-node
+  #     LABELS: ${LABELS_COMMON},${LABELS_NODE}
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - ./work/node:/_work
+
+  # 🔵 Runner especializado para builds con Docker
+  github-runner-docker:
+    container_name: github-runner-docker
+    environment:
+      RUNNER_NAME: vigilio-docker
+      LABELS: ${LABELS_COMMON},${LABELS_DOCKER}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./work/docker:/_work
